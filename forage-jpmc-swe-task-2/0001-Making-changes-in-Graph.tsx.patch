@@ -1,0 +1,180 @@
+From 182d868eee3cdf815415f6d384ffb71d31096ef4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Maria=20Leit=C3=A3o?= <malufln.99@gmail.com>
+Date: Wed, 3 Apr 2024 21:43:35 -0300
+Subject: [PATCH] Making changes in `Graph.tsx`
+
+---
+ .idea/workspace.xml                  |  5 ++--
+ forage-jpmc-swe-task-2/src/App.tsx   | 35 ++++++++++++++++++++--------
+ forage-jpmc-swe-task-2/src/Graph.tsx | 20 ++++++++++------
+ 3 files changed, 41 insertions(+), 19 deletions(-)
+
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+index bae27f8..548dd74 100644
+--- a/.idea/workspace.xml
++++ b/.idea/workspace.xml
+@@ -6,7 +6,8 @@
+   <component name="ChangeListManager">
+     <list default="true" id="de40bae7-c1b9-4dff-a331-a2ee869fa71d" name="Changes" comment="">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/package-lock.json" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/App.tsx" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/Graph.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/Graph.tsx" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -56,7 +57,7 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1712168173007</updated>
+-      <workItem from="1712168176243" duration="6047000" />
++      <workItem from="1712168176243" duration="7394000" />
+     </task>
+     <servers />
+   </component>
+diff --git a/forage-jpmc-swe-task-2/src/App.tsx b/forage-jpmc-swe-task-2/src/App.tsx
+index 0728518..d878408 100644
+--- a/forage-jpmc-swe-task-2/src/App.tsx
++++ b/forage-jpmc-swe-task-2/src/App.tsx
+@@ -8,10 +8,11 @@ import './App.css';
+  */
+ interface IState {
+   data: ServerRespond[],
++  showGraph: boolean,
+ }
+ 
+ /**
+- * The parent element of the react app.
++ * The parent element of the React app.
+  * It renders title, button and Graph react element.
+  */
+ class App extends Component<{}, IState> {
+@@ -22,6 +23,7 @@ class App extends Component<{}, IState> {
+       // data saves the server responds.
+       // We use this state to parse data down to the child element (Graph) as element property
+       data: [],
++      showGraph: false,
+     };
+   }
+ 
+@@ -29,24 +31,37 @@ class App extends Component<{}, IState> {
+    * Render Graph react component with state.data parse as property data
+    */
+   renderGraph() {
+-    return (<Graph data={this.state.data}/>)
++    if(this.state.showGraph) {
++      return (<Graph data={this.state.data}/>)
++    }
+   }
+ 
+   /**
+    * Get new data from server and update the state with the new data
+    */
+   getDataFromServer() {
+-    DataStreamer.getData((serverResponds: ServerRespond[]) => {
+-      // Update the state by creating a new array of data that consists of
+-      // Previous data in the state and the new data from server
+-      this.setState({ data: [...this.state.data, ...serverResponds] });
+-    });
++    let x = 0;
++    const interval = setInterval(() => {
++      DataStreamer.getData((serverResponds: ServerRespond[]) => {
++        // Update the state by creating a new array of data that consists of
++        // Previous data in the state and the new data from server
++        this.setState ({
++          data: serverResponds ,
++          showGraph: true ,
++        });
++      });
++      x++;
++      if (x > 1000)
++      {
++        clearInterval(interval);
++      }
++    }, 100);
+   }
+ 
+   /**
+    * Render the App react component
+    */
+-  render() {
++   render() {
+     return (
+       <div className="App">
+         <header className="App-header">
+@@ -54,7 +69,7 @@ class App extends Component<{}, IState> {
+         </header>
+         <div className="App-content">
+           <button className="btn btn-primary Stream-button"
+-            // when button is click, our react app tries to request
++            // when button is click, our React app tries to request
+             // new data from the server.
+             // As part of your task, update the getDataFromServer() function
+             // to keep requesting the data every 100ms until the app is closed
+@@ -71,4 +86,4 @@ class App extends Component<{}, IState> {
+   }
+ }
+ 
+-export default App;
++export default App;
+\ No newline at end of file
+diff --git a/forage-jpmc-swe-task-2/src/Graph.tsx b/forage-jpmc-swe-task-2/src/Graph.tsx
+index ec1430e..8945963 100644
+--- a/forage-jpmc-swe-task-2/src/Graph.tsx
++++ b/forage-jpmc-swe-task-2/src/Graph.tsx
+@@ -1,5 +1,5 @@
+ import React, { Component } from 'react';
+-import { Table } from '@jpmorganchase/perspective';
++import { Table } from '@finos/perspective';
+ import { ServerRespond } from './DataStreamer';
+ import './Graph.css';
+ 
+@@ -14,7 +14,7 @@ interface IProps {
+  * Perspective library adds load to HTMLElement prototype.
+  * This interface acts as a wrapper for Typescript compiler.
+  */
+-interface PerspectiveViewerElement {
++interface PerspectiveViewerElement extends HTMLElement {
+   load: (table: Table) => void,
+ }
+ 
+@@ -32,8 +32,8 @@ class Graph extends Component<IProps, {}> {
+ 
+   componentDidMount() {
+     // Get element to attach the table from the DOM.
+-    const elem: PerspectiveViewerElement = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+-
++    console.log('rendering');
++    const elem = document.getElementsByTagName('perspective-viewer')[0] as unknown as PerspectiveViewerElement;
+     const schema = {
+       stock: 'string',
+       top_ask_price: 'float',
+@@ -41,16 +41,22 @@ class Graph extends Component<IProps, {}> {
+       timestamp: 'date',
+     };
+ 
+-    if (window.perspective && window.perspective.worker()) {
++    if (window.perspective) {
+       this.table = window.perspective.worker().table(schema);
+     }
+     if (this.table) {
++      console.log('change table');
+       // Load the `table` in the `<perspective-viewer>` DOM reference.
+ 
+       // Add more Perspective configurations here.
+       elem.load(this.table);
+-    }
+-  }
++      elem.setAttribute('view', 'y_line');
++      elem.setAttribute('column-pivots', '["stock"]');
++      elem.setAttribute('row-pivots', '["timestamp"]');
++      elem.setAttribute('columns', '["top_ask_price"]');
++      elem.setAttribute('aggregates', '{"stock":"distinct count","top_ask_price":"avg","top_bid_price":"avg","timestamp":"distinct count"}');
++     }
++   }
+ 
+   componentDidUpdate() {
+     // Everytime the data props is updated, insert the data into Perspective table
+-- 
+2.43.0.windows.1
+
