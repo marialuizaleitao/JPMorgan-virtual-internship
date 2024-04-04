@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="de40bae7-c1b9-4dff-a331-a2ee869fa71d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/Graph.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/forage-jpmc-swe-task-2/src/Graph.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +57,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1712168173007</updated>
-      <workItem from="1712168176243" duration="6047000" />
+      <workItem from="1712168176243" duration="7394000" />
     </task>
     <servers />
   </component>
